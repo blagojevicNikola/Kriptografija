@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "y9r1EZdmpUyJ6ytw4PO2zynyef/eZCDXTydSfarfm/4fJoOlOw6GcAjcOavBulJC7UFuSX6B4B2BNe+rhJpsXA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Lenovo PC\\source\\repos\\Kriptografija(Projekat)\\Kriptografija(Projekat)\\Kriptografija(Projekat).csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Lenovo PC\\.nuget\\packages\\bouncycastle.cryptography\\2.0.0\\bouncycastle.cryptography.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
