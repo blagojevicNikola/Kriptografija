@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Kriptografija_Projekat_.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Row="0"
-               Content="Register"
+               Content="Registration"
                FontSize="23"
                FontWeight="SemiBold"
                Margin="0,30,0,30"
@@ -31,9 +31,20 @@
                  Margin="200,20,200,0"/>
         <TextBox Grid.Row="4"
                  Margin="200,20,200,20"/>
-        <Button Grid.Row="5"
-                Content="Register"
-                Height="40"
-                Width="70"/>
+        <StackPanel Grid.Row="5">
+            <Button Content="Register"
+                        FontSize="18"
+                        Height="40"
+                        Width="70"
+                        VerticalAlignment="Top"
+                        Margin="0,50,0,0"
+                        FontWeight="SemiBold"/>
+            <Button Content="Back"
+                        FontSize="14"
+                        Height="30"
+                        Width="60"
+                        Margin="0,10,0,0"
+                        Command="{Binding NavigateBackCommand}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

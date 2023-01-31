@@ -28,11 +28,13 @@
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0"
                      Width="320"
+                     Text="{Binding SertificatePath, Mode=TwoWay}"
                      HorizontalAlignment="Center"/>
             <Button Grid.Column="1"
                     Width="20"
                     Margin="10,0,0,0"
-                    HorizontalAlignment="Center"/>
+                    HorizontalAlignment="Center"
+                    Command="{Binding FindSertificateCommand}"/>
         </Grid>
         <StackPanel Grid.Row="2">
             <Button VerticalAlignment="Top"
