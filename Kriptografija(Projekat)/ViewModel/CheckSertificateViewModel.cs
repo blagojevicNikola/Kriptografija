@@ -1,13 +1,17 @@
 ﻿using Kriptografija_Projekat_.Commands;
+using Kriptografija_Projekat_.Service;
 using Kriptografija_Projekat_.Stores;
 using Microsoft.Win32;
+using Org.BouncyCastle.Asn1.Cmp;
+using Org.BouncyCastle.X509;
+using Org.BouncyCastle.X509.Store;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -55,25 +59,42 @@ namespace Kriptografija_Projekat_.ViewModel
 
         private void checkSertificate()
         {
-            X509Certificate2 cert = new X509Certificate2(File.ReadAllBytes(SertificatePath));
-            X509Certificate2 ca = new X509Certificate2(File.ReadAllBytes(ConfigurationManager.AppSettings["Path"]!));
-            
-            X509Chain chain = new X509Chain();
-            chain.ChainPolicy.ExtraStore.Clear();
-            chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
-            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-            chain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
-            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-            chain.ChainPolicy.VerificationTime = DateTime.Now;
-            chain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 0, 0);
+            if(!File.Exists(SertificatePath))
+            {
+                MessageBox.Show("Selected file dosn't exist!");
+                return;
+            }
+            //X509Certificate bc = new X509Certificate(File.ReadAllBytes(ConfigurationManager.AppSettings["Path"]!));
+            //X509V3CertificateGenerator gen = new X509V3CertificateGenerator();
+            CertificateConfigService service = new CertificateConfigService();
+            //X509V2CrlGenerator crlgen = new X509V2CrlGenerator();
+            //X509Certificate2 cert = new X509Certificate2(File.ReadAllBytes(SertificatePath), "sigurnost");
+            //X509Certificate bc = new Org.BouncyCastle.X509.X509Certificate();
+            //X509Certificate2 ca = new X509Certificate2(File.ReadAllBytes(ConfigurationManager.AppSettings["Path"]!), "sigurnost");
+            ////TestService service = new TestService(ca);
+            ////service.SignNewCert();
+            //Debug.WriteLine(cert.ToString());
+            //X509Chain chain = new X509Chain();
+            //chain.ChainPolicy.ExtraStore.Clear();
+            //chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+            //chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            //chain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
+            //chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+            //chain.ChainPolicy.VerificationTime = DateTime.Now;
+            //chain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 0, 0);
 
-            chain.ChainPolicy.ExtraStore.Add(ca);
+            //chain.ChainPolicy.ExtraStore.Add(ca);
 
-            bool isChainValid = chain.Build(cert);
+            //bool isChainValid = chain.Build(cert);
 
-            var valid = chain.ChainElements.Cast<X509ChainElement>().Any(x => x.Certificate.Thumbprint == ca.Thumbprint);
+            //var valid = chain.ChainElements.Cast<X509ChainElement>().Any(x => x.Certificate.Thumbprint == ca.Thumbprint);
+            //Debug.WriteLine(isChainValid + " - " + valid);
+            //for (int i = 0; i < chain.ChainStatus.Length; i++)
+            //{
+            //    Debug.WriteLine(chain.ChainStatus[i].StatusInformation);
+            //}
 
-            if(valid && isChainValid)
+            if (service.validateCertificate(SertificatePath))
             {
                 NavigateMainView.Execute(null);
             }
