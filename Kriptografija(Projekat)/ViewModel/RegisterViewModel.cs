@@ -47,6 +47,7 @@ namespace Kriptografija_Projekat_.ViewModel
                 if(dbService.AddCredentials(Username, Password))
                 {
                     _cert = certService.SignCert(Username);
+
                     NavigateLoginCommand.Execute(null);
                 }
                 else
