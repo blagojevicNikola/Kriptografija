@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET7_0;NETCOREAPP
 C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\App.xaml
-4-1858833425
+6-1989880998
 
-15-1417507591
+181915393977
 199-810425573
-MainWindow.xaml;View\CheckSertificateView.xaml;View\LoginView.xaml;View\RegisterView.xaml;
+MainWindow.xaml;Resources\Styles.xaml;View\CheckSertificateView.xaml;View\FilesOverviewView.xaml;View\LoginView.xaml;View\RegisterView.xaml;
 
 False
 

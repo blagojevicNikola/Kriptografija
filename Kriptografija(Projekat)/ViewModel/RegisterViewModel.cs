@@ -38,11 +38,20 @@ namespace Kriptografija_Projekat_.ViewModel
 
         public void register()
         {
-            CertificateConfigService service = new CertificateConfigService();
+            CertificateConfigService certService = new CertificateConfigService();
+            DataBaseService dbService = new DataBaseService();
             try
             {
-                service.SignCert(Name);
-                NavigateLoginCommand.Execute(null);
+                if(dbService.AddCredentials(Username, Password))
+                {
+                    certService.SignCert(Name);
+                    NavigateLoginCommand.Execute(null);
+                }
+                else
+                {
+                    MessageBox.Show("Username is used!");
+                }
+                
             }catch(Exception e)
             {
                 MessageBox.Show("Error while registrating!");

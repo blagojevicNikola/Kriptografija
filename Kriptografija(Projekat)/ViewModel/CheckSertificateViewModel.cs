@@ -61,7 +61,7 @@ namespace Kriptografija_Projekat_.ViewModel
         {
             if(!File.Exists(SertificatePath))
             {
-                MessageBox.Show("Selected file dosn't exist!");
+                MessageBox.Show("Selected file dosen't exist!");
                 return;
             }
             //X509Certificate bc = new X509Certificate(File.ReadAllBytes(ConfigurationManager.AppSettings["Path"]!));

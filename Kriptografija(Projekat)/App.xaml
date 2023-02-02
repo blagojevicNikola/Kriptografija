@@ -14,5 +14,8 @@
         <DataTemplate DataType="{x:Type vms:RegisterViewModel}">
             <views:RegisterView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vms:FilesOverviewViewModel}">
+            <views:FilesOverviewView/>
+        </DataTemplate>
     </Application.Resources>
 </Application>

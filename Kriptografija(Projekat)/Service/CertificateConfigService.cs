@@ -116,7 +116,7 @@ namespace Kriptografija_Projekat_.Service
             rsaGen.Init(new KeyGenerationParameters(new Org.BouncyCastle.Security.SecureRandom(), 4096));
             AsymmetricCipherKeyPair pair = rsaGen.GenerateKeyPair();
             X509V3CertificateGenerator gen = new X509V3CertificateGenerator();
-
+            
             var attrs = new Dictionary<DerObjectIdentifier, string>();
             attrs[X509Name.CN] = "CA";
             attrs[X509Name.C] = "AU";
@@ -167,6 +167,11 @@ namespace Kriptografija_Projekat_.Service
             {
                 isTimeValid = false;
             }
+
+            if (isSignatureValid && isTimeValid)
+                return true;
+            else
+                return false;
         }
     }
 }
