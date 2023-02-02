@@ -1,6 +1,7 @@
 ﻿using Kriptografija_Projekat_.Commands;
 using Kriptografija_Projekat_.Service;
 using Kriptografija_Projekat_.Stores;
+using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace Kriptografija_Projekat_.ViewModel
         private string _name="";
         private string _email="";
         private string _username = "";
-        private string _password = "";   
+        private string _password = "";
+        private X509Certificate? _cert;
 
         public string Name { get { return _name; } set { _name = value; NotifyPropertyChanged("Name"); } }
         public string Email { get { return _email; } set { _email = value;NotifyPropertyChanged("Email"); } }
@@ -32,7 +34,7 @@ namespace Kriptografija_Projekat_.ViewModel
         {
             _navigationStore = navigationStore;
             NavigateBackCommand = new NavigateCommand<CheckSertificateViewModel>(navigationStore, () => new CheckSertificateViewModel(navigationStore));
-            NavigateLoginCommand = new NavigateCommand<LoginViewModel>(navigationStore, () => new LoginViewModel(navigationStore));
+            NavigateLoginCommand = new NavigateCommand<LoginViewModel>(navigationStore, () => new LoginViewModel(navigationStore, _cert));
             RegisterCommand = new RelayCommand(() => register());
         }
 
@@ -44,7 +46,7 @@ namespace Kriptografija_Projekat_.ViewModel
             {
                 if(dbService.AddCredentials(Username, Password))
                 {
-                    certService.SignCert(Name);
+                    _cert = certService.SignCert(Username);
                     NavigateLoginCommand.Execute(null);
                 }
                 else

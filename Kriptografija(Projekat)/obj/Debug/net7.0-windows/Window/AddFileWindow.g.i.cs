@@ -53,7 +53,7 @@ namespace Kriptografija_Projekat_.Window {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Kriptografija(Projekat);V1.0.0.0;component/window/addfilewindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Kriptografija(Projekat);component/window/addfilewindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Window\AddFileWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

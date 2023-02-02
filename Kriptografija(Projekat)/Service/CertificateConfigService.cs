@@ -41,11 +41,12 @@ namespace Kriptografija_Projekat_.Service
            
         }
 
-        private string CreateCSR(string name)
+        private string CreateCSR(string name, out AsymmetricCipherKeyPair p)
         {
             RsaKeyPairGenerator rsaGen = new RsaKeyPairGenerator();
             rsaGen.Init(new KeyGenerationParameters(new Org.BouncyCastle.Security.SecureRandom(), 2048));
             AsymmetricCipherKeyPair pair = rsaGen.GenerateKeyPair();
+            p = pair;
             var attrs = new Dictionary<DerObjectIdentifier, string>();
             attrs[X509Name.CN] = name;
             attrs[X509Name.C] = "AU";
@@ -69,9 +70,10 @@ namespace Kriptografija_Projekat_.Service
             return csr;
         }
 
-        public void SignCert(string name)
+        public Org.BouncyCastle.X509.X509Certificate SignCert(string name)
         {
-            char[] csr = this.CreateCSR(name).ToCharArray();
+            AsymmetricCipherKeyPair csrPair;
+            char[] csr = this.CreateCSR(name, out csrPair).ToCharArray();
             byte[] csrEncode = Convert.FromBase64CharArray(csr, 0, csr.Length);
             Pkcs10CertificationRequest pk10Holder = new Pkcs10CertificationRequest(csrEncode);
             CryptoApiRandomGenerator randomGenerator = new CryptoApiRandomGenerator();
@@ -103,6 +105,13 @@ namespace Kriptografija_Projekat_.Service
 
             Org.BouncyCastle.X509.X509Certificate newCertificate = certificateGenerator.Generate(signatureFactory);
             File.WriteAllBytes(ConfigurationManager.AppSettings["Main"]! + @"\" + serialNumber + ".der", newCertificate.GetEncoded());
+            TextWriter tw = new StringWriter();
+            PemWriter pw = new PemWriter(tw);
+            pw.WriteObject(csrPair.Private);
+            pw.Writer.Flush();
+            File.WriteAllText(ConfigurationManager.AppSettings["Main"]! + @"\" + name + ".pem", tw.ToString());
+            tw.Close();
+            return newCertificate;
         }
 
         public void CreateSelfSigned()
@@ -147,9 +156,10 @@ namespace Kriptografija_Projekat_.Service
             pw.WriteObject(pair.Private);
             pw.Writer.Flush();
             File.WriteAllText(ConfigurationManager.AppSettings["Main"]! + @"\ca_key.pem", tw.ToString());
+            tw.Close();
         }
 
-        public bool validateCertificate(string certPath)
+        public Org.BouncyCastle.X509.X509Certificate? ValidateCertificate(string certPath)
         {
             Org.BouncyCastle.X509.X509Certificate cert = new Org.BouncyCastle.X509.X509Certificate(File.ReadAllBytes(certPath));
             Sha256Digest dgst = new Sha256Digest();
@@ -169,9 +179,9 @@ namespace Kriptografija_Projekat_.Service
             }
 
             if (isSignatureValid && isTimeValid)
-                return true;
+                return cert;
             else
-                return false;
+                return null;
         }
     }
 }

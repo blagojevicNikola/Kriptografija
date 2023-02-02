@@ -33,3 +33,5 @@ C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\
 C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\obj\Debug\net7.0-windows\Resources\Styles.baml
 C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\obj\Debug\net7.0-windows\View\FilesOverviewView.g.cs
 C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\obj\Debug\net7.0-windows\View\FilesOverviewView.baml
+C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\obj\Debug\net7.0-windows\Windows\AddFileWindow.g.cs
+C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\obj\Debug\net7.0-windows\Windows\AddFileWindow.baml

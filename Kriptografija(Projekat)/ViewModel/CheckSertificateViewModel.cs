@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace Kriptografija_Projekat_.ViewModel
     {
         private NavigationStore _navigationStore;
         private string _sertificatePath = "";
+        private X509Certificate? _cert;
         public string SertificatePath { 
             get 
             { 
@@ -41,7 +43,7 @@ namespace Kriptografija_Projekat_.ViewModel
         public CheckSertificateViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
-            NavigateMainView = new NavigateCommand<LoginViewModel>(navigationStore, () => new LoginViewModel(navigationStore));
+            NavigateMainView = new NavigateCommand<LoginViewModel>(navigationStore, () => new LoginViewModel(navigationStore, _cert!));
             CheckCommand = new RelayCommand(() => checkSertificate());
             NavigateRegisterCommand = new NavigateCommand<RegisterViewModel>(navigationStore, () => new RegisterViewModel(navigationStore));
             FindSertificateCommand = new RelayCommand(() => findSertificate());
@@ -93,9 +95,10 @@ namespace Kriptografija_Projekat_.ViewModel
             //{
             //    Debug.WriteLine(chain.ChainStatus[i].StatusInformation);
             //}
-
-            if (service.validateCertificate(SertificatePath))
+            Org.BouncyCastle.X509.X509Certificate? cert = service.ValidateCertificate(SertificatePath);
+            if (cert!=null)
             {
+                _cert = cert;
                 NavigateMainView.Execute(null);
             }
             else
