@@ -54,7 +54,7 @@ namespace Kriptografija_Projekat_.View {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Kriptografija(Projekat);component/view/loginview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Kriptografija(Projekat);V1.0.0.0;component/view/loginview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\View\LoginView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
