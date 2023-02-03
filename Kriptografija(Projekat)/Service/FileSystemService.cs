@@ -28,6 +28,7 @@ namespace Kriptografija_Projekat_.Service
         {
             if (!File.Exists(filePath))
                 return null;
+            CryptoService cryptoService = new CryptoService();
             string fileName = Path.GetFileName(filePath);
             UserFile newFile = new UserFile(fileName);
             byte[] array = File.ReadAllBytes(filePath);
@@ -36,12 +37,13 @@ namespace Kriptografija_Projekat_.Service
             int tmp = 0;
             chunks.ForEach(chunk =>
             {
-                newFile.AddSegment(writeSegment(user.Username, tmp.ToString(), chunk, user.KeyPair));
+                newFile.AddSegment(writeSegment(user.Username, (tmp++).ToString(), chunk, user.KeyPair, cryptoService));
             });
             return newFile;
         }
 
-        private Segment writeSegment(string username, string numOfChunk, byte[] arr, AsymmetricCipherKeyPair keyPair)
+
+        private Segment writeSegment(string username, string numOfChunk, byte[] arr, AsymmetricCipherKeyPair keyPair, CryptoService cryptoService)
         {
             string directoryName = ConfigurationManager.AppSettings["FS"]! + @"\" + numOfChunk;
             string chunkName = username+ "_" + numOfChunk;
@@ -58,14 +60,14 @@ namespace Kriptografija_Projekat_.Service
             string segmentName = Convert.ToBase64String(output);
             segmentName = segmentName.Replace(@"/", "");
 
-            ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
-            signer.BlockUpdate(arr, 0, arr.Length);
-            signer.Init(true, keyPair.Private);
-            byte[] signResult = signer.GenerateSignature();
+            //ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
+            //signer.BlockUpdate(arr, 0, arr.Length);
+            //signer.Init(true, keyPair.Private);
+            byte[] signResult = cryptoService.Sha256RsaSign(arr, keyPair.Private);
 
-            Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
-            encryptEngine.Init(true, keyPair.Public);
-            byte[] encResult = encryptEngine.ProcessBlock(arr, 0, arr.Length);
+            //Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
+            //encryptEngine.Init(true, keyPair.Public);
+            byte[] encResult = cryptoService.Aes128CBCEncrypt(arr, Encoding.UTF8.GetBytes("sigurnostsigurno"));
 
             string segmentFilePath = directoryName + @"\" + segmentName + ".cry";
             string segmentSignaturePath = directoryName + @"\" + segmentName + ".sig";

@@ -1,0 +1,38 @@
+﻿<Window x:Class="Kriptografija_Projekat_.Windows.DownloadFileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kriptografija_Projekat_.Windows" xmlns:viewmodel="clr-namespace:Kriptografija_Projekat_.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:DownloadFileViewModel}"
+        mc:Ignorable="d"
+        Title="DownloadFileWindow" Height="300" Width="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0"
+              HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0"
+                     Text="{Binding PathName}"
+                     Height="20"
+                     Width="200"/>
+            <Button Grid.Column="1"
+                    Command="{Binding FindPathCommand}"
+                    Height="20"
+                    Width="20"
+                    Margin="6,0,0,0"/>
+        </Grid>
+
+        <Button Grid.Row="1"
+                Command="{Binding DownloadCommand}"
+                Height="40"
+                Width="70"
+                Content="Download"/>
+    </Grid>
+</Window>

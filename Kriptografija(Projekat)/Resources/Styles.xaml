@@ -4,6 +4,8 @@
         
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="IsChecked" Value="{Binding IsSelected}"/>
+        <Setter Property="GroupName" Value="g1"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>

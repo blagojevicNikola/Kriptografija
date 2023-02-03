@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,10 +25,12 @@ namespace Kriptografija_Projekat_.ViewModel
 
         public ObservableCollection<UserFile> UserFiles { get { return _userFiles; } set { _userFiles = value; NotifyPropertyChanged("UserFile"); } }
         public ICommand AddWindowCommand { get; set; }
+        public ICommand DownloadWindowCommand { get; set; }
         public FilesOverviewViewModel(NavigationStore navigationStore, User user) 
         {
             _navigationStore = navigationStore;
             AddWindowCommand = new RelayCommand(() => addWindow());
+            DownloadWindowCommand = new RelayCommand(() => downloadWindow()); 
             _user = user;
             UserService userServ = new UserService();
             _userFiles = (ObservableCollection<UserFile>)userServ.GetUserFiles(user);
@@ -52,6 +55,42 @@ namespace Kriptografija_Projekat_.ViewModel
                 {
                     MessageBox.Show("File doesn't exist!");
                 }  
+            };
+            win.Show();
+        }
+
+        public void downloadWindow()
+        {
+            DownloadFileWindow win = new DownloadFileWindow();
+            DownloadFileViewModel vm = new DownloadFileViewModel();
+            win.DataContext = vm;
+            vm.CloseWindow += (a, e) =>
+            {
+                UserFile? selected = null;
+                foreach(UserFile file in UserFiles)
+                {
+                    if(file.IsSelected)
+                    {
+                        selected = file;
+                        break;
+                    }
+                }
+                if(selected!=null && Directory.Exists(vm.PathName))
+                {
+                    bool downloaded = selected.DownloadFile(vm.PathName, _user.KeyPair);
+                    if(!downloaded)
+                    {
+                        MessageBox.Show("Your file is corrupted!");
+                    }
+                    else
+                    {
+                        win.Close();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Error occured!");
+                }
             };
             win.Show();
         }

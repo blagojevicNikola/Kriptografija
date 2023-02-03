@@ -1,16 +1,25 @@
-﻿using System;
+﻿using Kriptografija_Projekat_.Service;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Utilities;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Kriptografija_Projekat_.Model
 {
-    public class UserFile
+    public class UserFile: INotifyPropertyChanged
     {   
         private List<Segment> _segments;
+        private bool _isSelected = false;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public string Name { get; set; }
-       
+        public bool IsSelected { get {  return _isSelected; } set { _isSelected = value; NotifyPropertyChanged("IsSelected"); } }
         public UserFile(string name)
         {
             Name = name;
@@ -26,6 +35,36 @@ namespace Kriptografija_Projekat_.Model
         public void AddSegment(Segment segment)
         {
             _segments.Add(segment);
+        }
+
+        public bool DownloadFile(string path, AsymmetricCipherKeyPair keyPair)
+        {
+            CryptoService cryptoService = new CryptoService();
+            List<byte[]> arr = new List<byte[]>();
+            foreach(Segment segment in _segments) 
+            {
+                byte[]? tmp = segment.Load(keyPair, cryptoService);
+                if(tmp == null)
+                {
+                    return false;
+                }
+                arr.Add(tmp);
+            }
+            int len = arr.Select(s => s.Length).Sum();
+            byte[] result = new byte[len];
+            int offset = 0;
+            foreach (byte[] array in arr)
+            {
+                System.Buffer.BlockCopy(array, 0, result, offset, array.Length);
+                offset += array.Length;
+            }
+            File.WriteAllBytes(path+@"\"+Name, result);
+            return true;
+        }
+
+        private void NotifyPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(name, new PropertyChangedEventArgs(name));
         }
 
         override

@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Diagnostics;
 using System.Windows.Input;
@@ -34,17 +35,9 @@ namespace Kriptografija_Projekat_.Service
             string content = "";
             files.ForEach(s => content += s);
             byte[] contentArr = Encoding.UTF8.GetBytes(content);
-            Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
             byte[] key = Encoding.Default.GetBytes("sigurnostsigurno");
-            CbcBlockCipher blockCipher = new CbcBlockCipher(new AesEngine());
-            PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(blockCipher);
-            cipher.Init(true, new ParametersWithIV(new KeyParameter(key), key, 0, key.Length));
-            byte[] symmetricOutput = new byte[cipher.GetOutputSize(contentArr.Length)];
-            int len = cipher.ProcessBytes(contentArr, symmetricOutput, 0);
-            cipher.DoFinal(symmetricOutput, len);
-            //encryptEngine.Init(true, user.KeyPair.Public);
-            
-            //byte[] outputArr = encryptEngine.ProcessBlock(contentArr, 0, contentArr.Length);
+            CryptoService cryptoService = new CryptoService();
+            byte[] symmetricOutput = cryptoService.Aes128CBCEncrypt(contentArr, key);
             File.WriteAllText(ConfigurationManager.AppSettings["Users"] + @"\" + user.Username +
                 @"\info.txt", Convert.ToBase64String(symmetricOutput));
         }
@@ -70,22 +63,15 @@ namespace Kriptografija_Projekat_.Service
                 return userFiles;
             }
             byte[] key = Encoding.Default.GetBytes("sigurnostsigurno");
-            CbcBlockCipher blockCipher = new CbcBlockCipher(new AesEngine());
-            PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(blockCipher);
-            cipher.Init(false, new ParametersWithIV(new KeyParameter(key), key, 0, key.Length));
-            byte[] inputArr = new byte[cipher.GetOutputSize(textArr.Length)];
-            int len = cipher.ProcessBytes(textArr, inputArr, 0);
-            cipher.DoFinal(inputArr, len);
-            //Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
-            //encryptEngine.Init(false, user.KeyPair.Private);
-            //string content = Encoding.Default.GetString(encryptEngine.ProcessBlock(textArr, 0, textArr.Length));
+            CryptoService cryptoService = new CryptoService();
+            byte[] inputArr = cryptoService.Aes128CBCDecrypt(textArr, key);
+            
             string content = Encoding.Default.GetString(inputArr);
-            string[] list = content.Split("$");
+            string[] list = content.Split("$", StringSplitOptions.TrimEntries);
             Debug.WriteLine(list.Length);
-            Debug.WriteLine(list[1]);
-            foreach(string l in list)
+            for (int i = 0; i < list.Length-1; i++)
             {
-                string tmp = l.Trim();
+                string tmp = list[i];
                 if(tmp=="")
                 {
                     continue;
@@ -93,9 +79,9 @@ namespace Kriptografija_Projekat_.Service
                 string[] sublist = tmp.Split("*");
                 string fileName = sublist[0];
                 List<Segment> segments = new List<Segment>();
-                for(int i = 1; i < sublist.Length; i++)
+                for(int j = 1; j < sublist.Length; j++)
                 {
-                    string[] data = sublist[i].Split("|");
+                    string[] data = sublist[j].Split("|");
                     segments.Add(new Segment(data[0], data[1]));
                 }
                 userFiles.Add(new UserFile(fileName, segments));

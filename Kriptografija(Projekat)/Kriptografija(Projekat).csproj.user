@@ -22,6 +22,9 @@
     <Compile Update="Windows\AddFileWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Windows\DownloadFileWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="MainWindow.xaml">
@@ -43,6 +46,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Windows\AddFileWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Windows\DownloadFileWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
