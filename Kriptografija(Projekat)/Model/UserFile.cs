@@ -27,5 +27,16 @@ namespace Kriptografija_Projekat_.Model
         {
             _segments.Add(segment);
         }
+
+        override
+        public string ToString()
+        {
+            string result = Name;
+            foreach(Segment segment in _segments)
+            {
+                result += "*" + segment.ToString();
+            }
+            return result + "$";
+        }
     }
 }

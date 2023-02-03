@@ -16,5 +16,11 @@ namespace Kriptografija_Projekat_.Model
             _filePath = filePath;
             _signaturePath = signaturePath;
         }
+
+        override
+        public string ToString() 
+        {
+            return _filePath + "|" + _signaturePath;
+        }
     }
 }

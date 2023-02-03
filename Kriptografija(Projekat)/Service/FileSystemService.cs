@@ -24,17 +24,19 @@ namespace Kriptografija_Projekat_.Service
             rand = new Random(); 
         }
 
-        public UserFile AddFile(string username, string filePath, AsymmetricCipherKeyPair keyPair)
+        public UserFile? AddFile(User user, string filePath)
         {
+            if (!File.Exists(filePath))
+                return null;
             string fileName = Path.GetFileName(filePath);
             UserFile newFile = new UserFile(fileName);
             byte[] array = File.ReadAllBytes(filePath);
-            int numOfSegments = rand.Next(6) + 4;
-            List<byte[]> chunks = (List<byte[]>)array.Chunk(numOfSegments);
+            int numOfSegments = array.Length / (rand.Next(7) + 4);
+            List<byte[]> chunks = array.Chunk(numOfSegments).ToList();
             int tmp = 0;
             chunks.ForEach(chunk =>
             {
-                newFile.AddSegment(writeSegment(username, filePath, chunk, keyPair));
+                newFile.AddSegment(writeSegment(user.Username, tmp.ToString(), chunk, user.KeyPair));
             });
             return newFile;
         }
@@ -53,7 +55,8 @@ namespace Kriptografija_Projekat_.Service
             alg.BlockUpdate(chunkNameArray, 0, chunkNameArray.Length);
             byte[] output = new byte[alg.GetDigestSize()];
             alg.DoFinal(output, 0);
-            string segmentName = Encoding.Default.GetString(output);
+            string segmentName = Convert.ToBase64String(output);
+            segmentName = segmentName.Replace(@"/", "");
 
             ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
             signer.BlockUpdate(arr, 0, arr.Length);

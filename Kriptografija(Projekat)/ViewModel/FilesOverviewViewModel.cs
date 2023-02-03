@@ -6,6 +6,7 @@ using Kriptografija_Projekat_.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,13 +22,16 @@ namespace Kriptografija_Projekat_.ViewModel
         private User _user;
         private ObservableCollection<UserFile> _userFiles;
 
-        public ObservableCollection<UserFile> UserFile { get { return _userFiles; } set { _userFiles = value; NotifyPropertyChanged("UserFile"); } }
+        public ObservableCollection<UserFile> UserFiles { get { return _userFiles; } set { _userFiles = value; NotifyPropertyChanged("UserFile"); } }
         public ICommand AddWindowCommand { get; set; }
         public FilesOverviewViewModel(NavigationStore navigationStore, User user) 
         {
             _navigationStore = navigationStore;
             AddWindowCommand = new RelayCommand(() => addWindow());
             _user = user;
+            UserService userServ = new UserService();
+            _userFiles = (ObservableCollection<UserFile>)userServ.GetUserFiles(user);
+            //Debug.WriteLine(_userFiles.Count);
         }
 
         private void addWindow()
@@ -36,11 +40,13 @@ namespace Kriptografija_Projekat_.ViewModel
             win.DataContext = new AddFileViewModel(_user);
             AddFileViewModel vm = (AddFileViewModel)win.DataContext;
             vm.CloseWindow += (a, e) => {
-                UserService userService = new UserService();
-                UserFile? file = userService.UploadFile(_user, vm.FilePath);
+                FileSystemService fsService = new FileSystemService();
+                UserFile? file = fsService.AddFile(_user, vm.FilePath);
                 if(file!=null)
                 {
-                    UserFile.Add(file);
+                    UserService userService = new UserService();
+                    userService.UploadInfo(_user, file);
+                    UserFiles.Add(file);
                     win.Close();
                 }else
                 {

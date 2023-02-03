@@ -19,16 +19,18 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0"
+                     Text="{Binding FilePath}"
                      Height="20"
                      Width="200"/>
             <Button Grid.Column="1"
+                    Command="{Binding FindFileCommand}"
                     Height="20"
                     Width="20"
                     Margin="6,0,0,0"/>
         </Grid>
 
         <Button Grid.Row="1"
-                Command="{Binding AddWindowCommand}"
+                Command="{Binding AddCommand}"
                 Height="40"
                 Width="70"
                 Content="Add"/>
