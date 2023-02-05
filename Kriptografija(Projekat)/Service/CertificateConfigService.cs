@@ -41,19 +41,19 @@ namespace Kriptografija_Projekat_.Service
            
         }
 
-        private string CreateCSR(string name, out AsymmetricCipherKeyPair p)
+        private string CreateCSR(string username, string mail, out AsymmetricCipherKeyPair p)
         {
             RsaKeyPairGenerator rsaGen = new RsaKeyPairGenerator();
             rsaGen.Init(new KeyGenerationParameters(new Org.BouncyCastle.Security.SecureRandom(), 2048));
             AsymmetricCipherKeyPair pair = rsaGen.GenerateKeyPair();
             p = pair;
             var attrs = new Dictionary<DerObjectIdentifier, string>();
-            attrs[X509Name.CN] = name;
-            attrs[X509Name.C] = "AU";
+            attrs[X509Name.CN] = username;
+            attrs[X509Name.C] = "BA";
             attrs[X509Name.O] = "ETF";
-            attrs[X509Name.L] = "Melbourne";
-            attrs[X509Name.ST] = "Victoria";
-            attrs[X509Name.E] = "feedback-crypto@bouncycastle.org";
+            attrs[X509Name.L] = "BL";
+            attrs[X509Name.ST] = "RS";
+            attrs[X509Name.E] = mail;
             var ord = new List<DerObjectIdentifier>();
             ord.Add(X509Name.CN);
             ord.Add(X509Name.C);
@@ -66,14 +66,15 @@ namespace Kriptografija_Projekat_.Service
 
             var pkcs10CertificationRequest = new Pkcs10CertificationRequest
                     (PkcsObjectIdentifiers.Sha256WithRsaEncryption.Id, subject, pair.Public, null, pair.Private);
+            
             string csr = Convert.ToBase64String(pkcs10CertificationRequest.GetEncoded());
             return csr;
         }
 
-        public Org.BouncyCastle.X509.X509Certificate SignCert(string name)
+        public Org.BouncyCastle.X509.X509Certificate SignCert(string username, string mail)
         {
             AsymmetricCipherKeyPair csrPair;
-            char[] csr = this.CreateCSR(name, out csrPair).ToCharArray();
+            char[] csr = this.CreateCSR(username, mail, out csrPair).ToCharArray();
             byte[] csrEncode = Convert.FromBase64CharArray(csr, 0, csr.Length);
             Pkcs10CertificationRequest pk10Holder = new Pkcs10CertificationRequest(csrEncode);
             CryptoApiRandomGenerator randomGenerator = new CryptoApiRandomGenerator();
@@ -102,14 +103,14 @@ namespace Kriptografija_Projekat_.Service
                 issuerPrivKey = (AsymmetricCipherKeyPair)new PemReader(reader).ReadObject();
 
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA256WITHRSA", issuerPrivKey.Private, random);
-
+            certificateGenerator.AddExtension(X509Extensions.KeyUsage, true, new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.NonRepudiation | KeyUsage.DataEncipherment));
             Org.BouncyCastle.X509.X509Certificate newCertificate = certificateGenerator.Generate(signatureFactory);
             File.WriteAllBytes(ConfigurationManager.AppSettings["Main"]! + @"\" + serialNumber + ".der", newCertificate.GetEncoded());
             TextWriter tw = new StringWriter();
             PemWriter pw = new PemWriter(tw);
             pw.WriteObject(csrPair.Private);
             pw.Writer.Flush();
-            File.WriteAllText(ConfigurationManager.AppSettings["Users"]! + @"\" + name + @"\" + name + ".pem", tw.ToString());
+            File.WriteAllText(ConfigurationManager.AppSettings["Users"]! + @"\" + username + @"\" + username + ".pem", tw.ToString());
             tw.Close();
             return newCertificate;
         }
@@ -128,11 +129,11 @@ namespace Kriptografija_Projekat_.Service
             
             var attrs = new Dictionary<DerObjectIdentifier, string>();
             attrs[X509Name.CN] = "CA";
-            attrs[X509Name.C] = "AU";
-            attrs[X509Name.O] = "The Legion of the Bouncy Castle";
-            attrs[X509Name.L] = "Melbourne";
-            attrs[X509Name.ST] = "Victoria";
-            attrs[X509Name.E] = "feedback-crypto@bouncycastle.org";
+            attrs[X509Name.C] = "BA";
+            attrs[X509Name.O] = "ETF";
+            attrs[X509Name.L] = "BL";
+            attrs[X509Name.ST] = "RS";
+            attrs[X509Name.E] = "etf@mail.com";
 
             var ord = new List<DerObjectIdentifier>();
             ord.Add(X509Name.CN);
@@ -143,14 +144,15 @@ namespace Kriptografija_Projekat_.Service
             ord.Add(X509Name.E);
 
             gen.SetSerialNumber(BigInteger.One);
-            
             gen.SetIssuerDN(new X509Name(ord, attrs));
             gen.SetNotBefore(DateTime.UtcNow.AddDays(0));
             gen.SetNotAfter(DateTime.UtcNow.AddYears(5));
             gen.SetSubjectDN(new X509Name(ord, attrs));
             gen.SetPublicKey(pair.Public);
+            X509ExtensionsGenerator extGen = new X509ExtensionsGenerator();
+            gen.AddExtension(X509Extensions.KeyUsage, true, new KeyUsage(KeyUsage.CrlSign | KeyUsage.DigitalSignature | KeyUsage.NonRepudiation));
             Org.BouncyCastle.X509.X509Certificate cert = gen.Generate(new Asn1SignatureFactory("SHA256WITHRSA", pair.Private, null));
-            File.WriteAllBytes(@"C:\Users\Lenovo PC\Desktop\ca1.der", cert.GetEncoded());
+            File.WriteAllBytes(ConfigurationManager.AppSettings["Main"]+@"\ca1.der", cert.GetEncoded());
             TextWriter tw = new StringWriter();
             PemWriter pw = new PemWriter(tw);
             pw.WriteObject(pair.Private);
@@ -161,7 +163,18 @@ namespace Kriptografija_Projekat_.Service
 
         public Org.BouncyCastle.X509.X509Certificate? ValidateCertificate(string certPath)
         {
+            X509Crl crl = new X509Crl(File.ReadAllBytes(ConfigurationManager.AppSettings["CRL"]! + @"\CertRevocationList.crl"));
             Org.BouncyCastle.X509.X509Certificate cert = new Org.BouncyCastle.X509.X509Certificate(File.ReadAllBytes(certPath));
+            if(crl.IsRevoked(cert))
+            {
+                return null;
+            }
+            bool[] usage = new bool[] { true, true, false, true, false, false, false, false, false};
+            bool[] certUsage = cert.GetKeyUsage();
+            if(!compareArrays(usage,certUsage))
+            {
+                return null;
+            }
             Sha256Digest dgst = new Sha256Digest();
             RsaDigestSigner signer = new RsaDigestSigner(dgst);
             AsymmetricCipherKeyPair issuerPrivKey;
@@ -187,9 +200,23 @@ namespace Kriptografija_Projekat_.Service
         public void BuildCRL()
         {
             Org.BouncyCastle.X509.X509Certificate issuer = new Org.BouncyCastle.X509.X509Certificate(File.ReadAllBytes(ConfigurationManager.AppSettings["Path"]!));
+            AsymmetricCipherKeyPair issuerPrivKey;
+            using (var reader = File.OpenText(ConfigurationManager.AppSettings["Main"]! + @"\ca_key.pem"))
+                issuerPrivKey = (AsymmetricCipherKeyPair)new PemReader(reader).ReadObject();
             X509V2CrlGenerator gen = new X509V2CrlGenerator();
             gen.SetIssuerDN(issuer.IssuerDN);
-            
+            gen.SetNextUpdate(DateTime.Now.AddMonths(3));
+            gen.SetThisUpdate(DateTime.Now);
+            string signatureAlgorithm = "SHA256withRSA";
+            ISignatureFactory signatureFactory = new Asn1SignatureFactory(signatureAlgorithm, issuerPrivKey.Private);
+            X509Crl crl = gen.Generate(signatureFactory);
+            byte[] temp = crl.GetEncoded();
+            File.WriteAllBytes(ConfigurationManager.AppSettings["CRL"]! + @"\CertRevocationList.crl", temp);
+        }
+
+        private bool compareArrays(ReadOnlySpan<bool> a1, ReadOnlySpan<bool> a2)
+        {
+            return a1.SequenceEqual(a2);
         }
     }
 }

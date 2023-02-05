@@ -49,8 +49,8 @@ namespace Kriptografija_Projekat_.ViewModel
                 {
                     UserService userService = new UserService();
                     userService.SetupUserEnvironment(Username);
-                    _cert = certService.SignCert(Username);
-                    userService.SetUserPassword(new User(Username, Password, "mejl", _cert));
+                    _cert = certService.SignCert(Username, Email);
+                    userService.SetUserPassword(new User(Username, Password, Email, _cert));
                     NavigateLoginCommand.Execute(null);
                 }
                 else
