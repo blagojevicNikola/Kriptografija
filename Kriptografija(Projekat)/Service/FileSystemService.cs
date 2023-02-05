@@ -80,13 +80,13 @@ namespace Kriptografija_Projekat_.Service
 
             //Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
             //encryptEngine.Init(true, keyPair.Public);
-            byte[] encResult = cryptoService.Aes128CBCEncrypt(arr, Encoding.UTF8.GetBytes("sigurnostsigurno"));
+            byte[] encResult = cryptoService.AesSystemEncrypt(arr);
             byte[] signResult = cryptoService.Sha256RsaSign(encResult, keyPair.Private);
 
             string segmentFilePath = directoryName + @"\" + segmentName + ".cry";
             string segmentSignaturePath = directoryName + @"\" + segmentName + ".sig";
-            File.WriteAllBytes(segmentFilePath, encResult);
-            File.WriteAllBytes(segmentSignaturePath, signResult);
+            File.WriteAllText(segmentFilePath, Convert.ToBase64String(encResult));
+            File.WriteAllText(segmentSignaturePath, Convert.ToBase64String(signResult));
 
             return new Segment(segmentFilePath, segmentSignaturePath);
         }

@@ -22,15 +22,21 @@ namespace Kriptografija_Projekat_.ViewModel
         private NavigationStore _navigationStore;
         private User _user;
         private ObservableCollection<UserFile> _userFiles;
+        private string _fileContent;
 
+        public string FileContent { get { return _fileContent; } set { _fileContent= value; NotifyPropertyChanged("FileContent"); } }
         public ObservableCollection<UserFile> UserFiles { get { return _userFiles; } set { _userFiles = value; NotifyPropertyChanged("UserFile"); } }
         public ICommand AddWindowCommand { get; set; }
         public ICommand DownloadWindowCommand { get; set; }
+        public ICommand LoadFileContentCommand { get; set; }
+        public ICommand SelectFileCommand { get; set; }
         public FilesOverviewViewModel(NavigationStore navigationStore, User user) 
         {
             _navigationStore = navigationStore;
-            AddWindowCommand = new RelayCommand(() => addWindow());
-            DownloadWindowCommand = new RelayCommand(() => downloadWindow()); 
+            AddWindowCommand = new RelayCommand(addWindow);
+            DownloadWindowCommand = new RelayCommand(downloadWindow);
+            LoadFileContentCommand = new RelayCommand(loadFileContent);
+            SelectFileCommand = new ParameterRelayCommand<UserFile>(selectFile);
             _user = user;
             UserService userServ = new UserService();
             _userFiles = (ObservableCollection<UserFile>)userServ.GetUserFiles(user);
@@ -94,5 +100,39 @@ namespace Kriptografija_Projekat_.ViewModel
             };
             win.Show();
         }
+
+        private void loadFileContent()
+        {
+            UserFile? file = null;
+            foreach(UserFile userFile in UserFiles)
+            {
+                if(userFile.IsSelected)
+                {
+                    file = userFile;
+                    break;
+                }
+            }
+            if(file==null)
+            {
+                return;
+            }
+            byte[]? content = file.GetContent(_user.KeyPair);
+            if(content==null)
+            {
+                MessageBox.Show("This file has been corrupted!");
+            }else
+            {
+                FileContent = Encoding.UTF8.GetString(content);
+            }
+        }
+
+        private void selectFile(UserFile file)
+        {
+            if(file!=null && !file.IsSelected)
+            {
+                FileContent = "";
+            }
+        }
+
     }
 }

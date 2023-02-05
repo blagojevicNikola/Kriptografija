@@ -5,6 +5,7 @@ using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,18 +28,24 @@ namespace Kriptografija_Projekat_.Model
         {
             try
             {
-                byte[] content = File.ReadAllBytes(_filePath);
-                byte[] signature = File.ReadAllBytes(_signaturePath);
+                string content = File.ReadAllText(_filePath);
+                string signature = File.ReadAllText(_signaturePath);
 
-                
+
                 //Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
                 //encryptEngine.Init(false, keyPair.Private);
-                bool verified = cryptoService.Sha256RsaVerify(content, signature, keyPair);
-                if(!verified)
+                //string newSignature = Convert.ToBase64String(cryptoService.Sha256RsaSign(Convert.FromBase64String(content), keyPair.Private));
+
+                //if(signature!=newSignature)
+                //{
+                //    return null;
+                //}
+                bool verified = cryptoService.Sha256RsaVerify(Convert.FromBase64String(content), Convert.FromBase64String(signature), keyPair);
+                if (!verified)
                 {
                     return null;
                 }
-                byte[] decResult = cryptoService.Aes128CBCDecrypt(content, Encoding.UTF8.GetBytes("sigurnostsigurno"));
+                byte[] decResult = cryptoService.AesSystemDecrypt(content);
 
                 //ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
                 //signer.BlockUpdate(decResult, 0, decResult.Length);
@@ -46,6 +53,7 @@ namespace Kriptografija_Projekat_.Model
                 return decResult;
             }catch(FormatException)
             {
+                Debug.WriteLine("Greska u base64!");
                 return null;
             }
             

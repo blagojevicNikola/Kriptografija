@@ -183,5 +183,13 @@ namespace Kriptografija_Projekat_.Service
             else
                 return null;
         }
+
+        public void BuildCRL()
+        {
+            Org.BouncyCastle.X509.X509Certificate issuer = new Org.BouncyCastle.X509.X509Certificate(File.ReadAllBytes(ConfigurationManager.AppSettings["Path"]!));
+            X509V2CrlGenerator gen = new X509V2CrlGenerator();
+            gen.SetIssuerDN(issuer.IssuerDN);
+            
+        }
     }
 }

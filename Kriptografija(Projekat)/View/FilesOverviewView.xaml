@@ -44,7 +44,10 @@
                           ItemsSource="{Binding UserFiles}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <RadioButton Style="{StaticResource FileRadioButtonStyle}"/>
+                        <RadioButton Style="{StaticResource FileRadioButtonStyle}"
+                                     Command="{Binding Path=DataContext.SelectFileCommand, 
+         RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                     CommandParameter="{Binding}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -57,6 +60,26 @@
                             Margin="0,5,0,5"/>
                 </StackPanel>
             </Grid>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0"
+                    Command="{Binding LoadFileContentCommand}"
+                    Margin="4"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Height="25"
+                    Width="50"/>
+
+            <TextBlock Grid.Row="1"
+                       TextWrapping="Wrap"
+                       Text="{Binding FileContent}"
+                       Margin="4"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -39,14 +39,25 @@ namespace Kriptografija_Projekat_.Model
 
         public bool DownloadFile(string path, AsymmetricCipherKeyPair keyPair)
         {
+            byte[]? result = GetContent(keyPair);
+            if(result == null) 
+            {
+                return false;
+            }
+            File.WriteAllBytes(path+@"\"+Name, result);
+            return true;
+        }
+
+        public byte[]? GetContent(AsymmetricCipherKeyPair keyPair)
+        {
             CryptoService cryptoService = new CryptoService();
             List<byte[]> arr = new List<byte[]>();
-            foreach(Segment segment in _segments) 
+            foreach (Segment segment in _segments)
             {
                 byte[]? tmp = segment.Load(keyPair, cryptoService);
-                if(tmp == null)
+                if (tmp == null)
                 {
-                    return false;
+                    return null;
                 }
                 arr.Add(tmp);
             }
@@ -58,8 +69,7 @@ namespace Kriptografija_Projekat_.Model
                 System.Buffer.BlockCopy(array, 0, result, offset, array.Length);
                 offset += array.Length;
             }
-            File.WriteAllBytes(path+@"\"+Name, result);
-            return true;
+            return result;
         }
 
         private void NotifyPropertyChanged(string name)
