@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Crypto;
+﻿using Kriptografija_Projekat_.Service;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.X509;
 using System;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Kriptografija_Projekat_.Model
 {
@@ -28,8 +30,17 @@ namespace Kriptografija_Projekat_.Model
             Username = username;
             Password = password;
             Email = email;
-            using (var reader = File.OpenText(ConfigurationManager.AppSettings["Main"]! + @"\" + username + ".pem"))
+            using (var reader = File.OpenText(ConfigurationManager.AppSettings["Users"]! + @"\" + username + @"\" + username + ".pem"))
                 _keyPair = (AsymmetricCipherKeyPair)new PemReader(reader).ReadObject();
+        }
+
+        public string GetPassword()
+        {
+            string filePath = ConfigurationManager.AppSettings["Users"]! + @"\" + Username + @"\" + Username + ".pass";
+            CryptoService cryptoService = new CryptoService();
+            byte[] input = File.ReadAllBytes(filePath);
+            byte[] password = cryptoService.RsaDecryptWithPrivate(input, KeyPair.Private);
+            return Encoding.UTF8.GetString(password);
         }
     }
 }

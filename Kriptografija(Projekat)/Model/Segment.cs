@@ -25,25 +25,30 @@ namespace Kriptografija_Projekat_.Model
 
         public byte[]? Load(AsymmetricCipherKeyPair keyPair, CryptoService cryptoService)
         {
-            byte[] content = Convert.FromBase64String(File.ReadAllText(_filePath));
-            byte[] signature = Convert.FromBase64String(File.ReadAllText(_signaturePath));
-
-            //Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
-            //encryptEngine.Init(false, keyPair.Private);
-            byte[] decResult = cryptoService.Aes128CBCDecrypt(content, Encoding.UTF8.GetBytes("sigurnostsigurno"));
-
-            //ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
-            //signer.BlockUpdate(decResult, 0, decResult.Length);
-            //signer.Init(false, keyPair.Public);
-            bool verified = cryptoService.Sha256RsaVerify(decResult, signature, keyPair.Public);
-            if (verified)
+            try
             {
+                byte[] content = File.ReadAllBytes(_filePath);
+                byte[] signature = File.ReadAllBytes(_signaturePath);
+
+                
+                //Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
+                //encryptEngine.Init(false, keyPair.Private);
+                bool verified = cryptoService.Sha256RsaVerify(content, signature, keyPair);
+                if(!verified)
+                {
+                    return null;
+                }
+                byte[] decResult = cryptoService.Aes128CBCDecrypt(content, Encoding.UTF8.GetBytes("sigurnostsigurno"));
+
+                //ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
+                //signer.BlockUpdate(decResult, 0, decResult.Length);
+                //signer.Init(false, keyPair.Public);
                 return decResult;
-            }
-            else
+            }catch(FormatException)
             {
                 return null;
             }
+            
         }
 
         override

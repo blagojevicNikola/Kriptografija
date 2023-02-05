@@ -1,4 +1,5 @@
 ﻿using Kriptografija_Projekat_.Commands;
+using Kriptografija_Projekat_.Model;
 using Kriptografija_Projekat_.Service;
 using Kriptografija_Projekat_.Stores;
 using Org.BouncyCastle.X509;
@@ -46,9 +47,10 @@ namespace Kriptografija_Projekat_.ViewModel
             {
                 if(dbService.AddCredentials(Username, Password))
                 {
-                    _cert = certService.SignCert(Username);
                     UserService userService = new UserService();
                     userService.SetupUserEnvironment(Username);
+                    _cert = certService.SignCert(Username);
+                    userService.SetUserPassword(new User(Username, Password, "mejl", _cert));
                     NavigateLoginCommand.Execute(null);
                 }
                 else

@@ -48,6 +48,20 @@ namespace Kriptografija_Projekat_.Service
             File.Create(folderName + @"\info.txt").Close();
         }
 
+        public void SetUserPassword(User user)
+        {
+            string folderPath = ConfigurationManager.AppSettings["Users"]! + @"\" + user.Username;
+            string password = user.Password;
+            while(password.Length <16)
+            {
+                password += password;
+            }
+            byte[] passwordArr = Encoding.UTF8.GetBytes(password, 0, 16);
+            CryptoService cryptoService = new CryptoService();
+            byte[] encrypted = cryptoService.RsaEncryptWithPublic(passwordArr, user.KeyPair.Public);
+            File.WriteAllBytes(folderPath + @"\" + user.Username + ".pass", encrypted);
+        }
+
         public IEnumerable<UserFile> GetUserFiles(User user)
         {
             ObservableCollection<UserFile> userFiles = new ObservableCollection<UserFile>();

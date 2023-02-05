@@ -109,7 +109,7 @@ namespace Kriptografija_Projekat_.Service
             PemWriter pw = new PemWriter(tw);
             pw.WriteObject(csrPair.Private);
             pw.Writer.Flush();
-            File.WriteAllText(ConfigurationManager.AppSettings["Main"]! + @"\" + name + ".pem", tw.ToString());
+            File.WriteAllText(ConfigurationManager.AppSettings["Users"]! + @"\" + name + @"\" + name + ".pem", tw.ToString());
             tw.Close();
             return newCertificate;
         }

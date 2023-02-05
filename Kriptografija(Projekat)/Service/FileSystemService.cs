@@ -8,6 +8,7 @@ using Org.BouncyCastle.Tls;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -34,10 +35,23 @@ namespace Kriptografija_Projekat_.Service
             byte[] array = File.ReadAllBytes(filePath);
             int numOfSegments = array.Length / (rand.Next(7) + 4);
             List<byte[]> chunks = array.Chunk(numOfSegments).ToList();
+            int[] folders = new int[chunks.Count];
+            int i = 0;
+            while(i!=chunks.Count-1)
+            {
+                Debug.WriteLine("--" + i);
+                int temp = rand.Next(chunks.Count);
+                if(!folders.Contains(temp))
+                {
+                    folders[i] = temp;
+                    i++;
+                    Debug.WriteLine("++" + i);
+                }
+            }
             int tmp = 0;
             chunks.ForEach(chunk =>
             {
-                newFile.AddSegment(writeSegment(user.Username, (tmp++).ToString(), chunk, user.KeyPair, cryptoService));
+                newFile.AddSegment(writeSegment(user.Username, folders[tmp++].ToString(), chunk, user.KeyPair, cryptoService));
             });
             return newFile;
         }
@@ -63,16 +77,16 @@ namespace Kriptografija_Projekat_.Service
             //ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
             //signer.BlockUpdate(arr, 0, arr.Length);
             //signer.Init(true, keyPair.Private);
-            byte[] signResult = cryptoService.Sha256RsaSign(arr, keyPair.Private);
 
             //Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
             //encryptEngine.Init(true, keyPair.Public);
             byte[] encResult = cryptoService.Aes128CBCEncrypt(arr, Encoding.UTF8.GetBytes("sigurnostsigurno"));
+            byte[] signResult = cryptoService.Sha256RsaSign(encResult, keyPair.Private);
 
             string segmentFilePath = directoryName + @"\" + segmentName + ".cry";
             string segmentSignaturePath = directoryName + @"\" + segmentName + ".sig";
-            File.WriteAllText(segmentFilePath, Convert.ToBase64String(encResult));
-            File.WriteAllText(segmentSignaturePath, Convert.ToBase64String(signResult));
+            File.WriteAllBytes(segmentFilePath, encResult);
+            File.WriteAllBytes(segmentSignaturePath, signResult);
 
             return new Segment(segmentFilePath, segmentSignaturePath);
         }
