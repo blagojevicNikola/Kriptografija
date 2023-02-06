@@ -20,7 +20,7 @@ namespace Kriptografija_Projekat_.ViewModel
         private string _password = "";
         private X509Certificate _cert;
         private User _user;
-
+        private int _numOfAttempts = 0;
         public string Username { get { return _username; } set { _username = value; NotifyPropertyChanged("Username"); } }
         public string Password { get { return _password; } set { _password = value; NotifyPropertyChanged("Password"); } }
         public ICommand NavigateBackCommand { get; set; }
@@ -37,8 +37,9 @@ namespace Kriptografija_Projekat_.ViewModel
 
         public void login()
         {
+            _numOfAttempts++;
             DataBaseService dbService = new DataBaseService();
-            if(dbService.UserExists(Username, Password))
+            if(dbService.UserExists(Username, Password) && _numOfAttempts<4)
             {
                 _user = new User(Username, Password, "mejl", _cert);
                 NavigateFileOvereviewCommand.Execute(null);
@@ -46,6 +47,11 @@ namespace Kriptografija_Projekat_.ViewModel
             else
             {
                 MessageBox.Show("Wrong credentials!");
+                if(_numOfAttempts == 3)
+                {
+                    CertificateConfigService service = new CertificateConfigService();
+                    service.RevokeCertificate(_cert);
+                }
             }
         }
     }

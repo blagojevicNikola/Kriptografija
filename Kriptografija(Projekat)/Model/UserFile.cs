@@ -37,9 +37,9 @@ namespace Kriptografija_Projekat_.Model
             _segments.Add(segment);
         }
 
-        public bool DownloadFile(string path, AsymmetricCipherKeyPair keyPair)
+        public bool DownloadFile(string path, User user)
         {
-            byte[]? result = GetContent(keyPair);
+            byte[]? result = GetContent(user);
             if(result == null) 
             {
                 return false;
@@ -48,13 +48,13 @@ namespace Kriptografija_Projekat_.Model
             return true;
         }
 
-        public byte[]? GetContent(AsymmetricCipherKeyPair keyPair)
+        public byte[]? GetContent(User user)
         {
             CryptoService cryptoService = new CryptoService();
             List<byte[]> arr = new List<byte[]>();
             foreach (Segment segment in _segments)
             {
-                byte[]? tmp = segment.Load(keyPair, cryptoService);
+                byte[]? tmp = segment.Load(user, user.KeyPair, cryptoService);
                 if (tmp == null)
                 {
                     return null;

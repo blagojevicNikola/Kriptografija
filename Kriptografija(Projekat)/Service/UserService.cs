@@ -35,9 +35,8 @@ namespace Kriptografija_Projekat_.Service
             string content = "";
             files.ForEach(s => content += s);
             byte[] contentArr = Encoding.UTF8.GetBytes(content);
-            byte[] key = Encoding.Default.GetBytes("sigurnostsigurno");
             CryptoService cryptoService = new CryptoService();
-            byte[] symmetricOutput = cryptoService.Aes128CBCEncrypt(contentArr, key);
+            byte[] symmetricOutput = cryptoService.AesSystemEncrypt(contentArr, user.GetPassword());
             File.WriteAllText(ConfigurationManager.AppSettings["Users"] + @"\" + user.Username +
                 @"\info.txt", Convert.ToBase64String(symmetricOutput));
         }
@@ -71,16 +70,15 @@ namespace Kriptografija_Projekat_.Service
             {
                 return userFiles;
             }
-            byte[] textArr = Convert.FromBase64String(text);
-            if(textArr.Length==0)
+            if(text.Length==0)
             {
                 return userFiles;
             }
-            byte[] key = Encoding.Default.GetBytes("sigurnostsigurno");
+
             CryptoService cryptoService = new CryptoService();
-            byte[] inputArr = cryptoService.Aes128CBCDecrypt(textArr, key);
+            byte[] inputArr = cryptoService.AesSystemDecrypt(text, user.GetPassword());
             
-            string content = Encoding.Default.GetString(inputArr);
+            string content = Encoding.UTF8.GetString(inputArr);
             string[] list = content.Split("$", StringSplitOptions.TrimEntries);
             Debug.WriteLine(list.Length);
             for (int i = 0; i < list.Length-1; i++)

@@ -51,16 +51,16 @@ namespace Kriptografija_Projekat_.Service
             int tmp = 0;
             chunks.ForEach(chunk =>
             {
-                newFile.AddSegment(writeSegment(user.Username, folders[tmp++].ToString(), chunk, user.KeyPair, cryptoService));
+                newFile.AddSegment(writeSegment(user, folders[tmp++].ToString(), chunk, user.KeyPair, cryptoService));
             });
             return newFile;
         }
 
 
-        private Segment writeSegment(string username, string numOfChunk, byte[] arr, AsymmetricCipherKeyPair keyPair, CryptoService cryptoService)
+        private Segment writeSegment(User user, string numOfChunk, byte[] arr, AsymmetricCipherKeyPair keyPair, CryptoService cryptoService)
         {
             string directoryName = ConfigurationManager.AppSettings["FS"]! + @"\" + numOfChunk;
-            string chunkName = username+ "_" + numOfChunk;
+            string chunkName = user.Username+ "_" + numOfChunk;
             if (!File.Exists(directoryName))
             {
                 Directory.CreateDirectory(directoryName);
@@ -80,7 +80,7 @@ namespace Kriptografija_Projekat_.Service
 
             //Pkcs1Encoding encryptEngine = new Pkcs1Encoding(new RsaEngine());
             //encryptEngine.Init(true, keyPair.Public);
-            byte[] encResult = cryptoService.AesSystemEncrypt(arr);
+            byte[] encResult = cryptoService.AesSystemEncrypt(arr, user.GetPassword());
             byte[] signResult = cryptoService.Sha256RsaSign(encResult, keyPair.Private);
 
             string segmentFilePath = directoryName + @"\" + segmentName + ".cry";

@@ -83,7 +83,7 @@ namespace Kriptografija_Projekat_.ViewModel
                 }
                 if(selected!=null && Directory.Exists(vm.PathName))
                 {
-                    bool downloaded = selected.DownloadFile(vm.PathName, _user.KeyPair);
+                    bool downloaded = selected.DownloadFile(vm.PathName, _user);
                     if(!downloaded)
                     {
                         MessageBox.Show("Your file is corrupted!");
@@ -116,7 +116,7 @@ namespace Kriptografija_Projekat_.ViewModel
             {
                 return;
             }
-            byte[]? content = file.GetContent(_user.KeyPair);
+            byte[]? content = file.GetContent(_user);
             if(content==null)
             {
                 MessageBox.Show("This file has been corrupted!");

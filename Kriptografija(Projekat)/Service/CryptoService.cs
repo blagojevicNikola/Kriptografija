@@ -47,9 +47,13 @@ namespace Kriptografija_Projekat_.Service
             return symmetricOutput;
         }
 
-        public byte[] AesSystemEncrypt(byte[] clearBytes)
+        public byte[] AesSystemEncrypt(byte[] clearBytes, string key)
         {
-            string EncryptionKey = "sigurnostsigurnostsigurnostsigurnost";
+            string EncryptionKey = key;
+            while (EncryptionKey.Length < 32)
+            {
+                EncryptionKey += EncryptionKey;
+            }
             using (Aes encryptor = Aes.Create())
             {
                 encryptor.Key = Encoding.Unicode.GetBytes(EncryptionKey).Skip(0).Take(32).ToArray();
@@ -66,9 +70,13 @@ namespace Kriptografija_Projekat_.Service
             }
         }
 
-        public byte[] AesSystemDecrypt(string input)
+        public byte[] AesSystemDecrypt(string input, string key)
         {
-            string EncryptionKey = "sigurnostsigurnostsigurnostsigurnost";
+            string EncryptionKey = key;
+            while(EncryptionKey.Length <32) 
+            {
+                EncryptionKey += EncryptionKey;
+            }
             byte[] cipherBytes = Convert.FromBase64String(input);
             using (Aes encryptor = Aes.Create())
             {
@@ -120,19 +128,25 @@ namespace Kriptografija_Projekat_.Service
 
         public bool Sha256RsaVerify(byte[] input, byte[] signature, AsymmetricCipherKeyPair keyPair)
         {
+            try
+            {
+                //ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
+                Sha512Digest dgst = new Sha512Digest();
+                //RsaDigestSigner signer = new RsaDigestSigner(dgst);
+                byte[] temp1 = new byte[dgst.GetDigestSize()];
+                dgst.BlockUpdate(input, 0, input.Length);
+                dgst.DoFinal(temp1);
+                byte[] temp2 = RsaDecryptWithPublic(signature, keyPair.Public);
+                //signer.BlockUpdate(input, 0, input.Length);
+                //signer.Init(false, (RsaKeyParameters)keyPair.Public);
+                //bool verified = signer.VerifySignature(signature);
+                bool verified = compareArrays(temp1, temp2);
+                return verified;
+            } catch(InvalidCipherTextException e) 
+            {
+                return false;
+            }
             
-            //ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
-            Sha512Digest dgst = new Sha512Digest();
-            //RsaDigestSigner signer = new RsaDigestSigner(dgst);
-            byte[] temp1 = new byte[dgst.GetDigestSize()];
-            dgst.BlockUpdate(input, 0, input.Length);
-            dgst.DoFinal(temp1);
-            byte[] temp2 = RsaDecryptWithPublic(signature, keyPair.Public);
-            //signer.BlockUpdate(input, 0, input.Length);
-            //signer.Init(false, (RsaKeyParameters)keyPair.Public);
-            //bool verified = signer.VerifySignature(signature);
-            bool verified = compareArrays(temp1, temp2);
-            return verified;
         }
 
         public byte[] RsaDecryptWithPublic(byte[] input, AsymmetricKeyParameter publicKey)

@@ -203,6 +203,7 @@ namespace Kriptografija_Projekat_.Service
             AsymmetricCipherKeyPair issuerPrivKey;
             using (var reader = File.OpenText(ConfigurationManager.AppSettings["Main"]! + @"\ca_key.pem"))
                 issuerPrivKey = (AsymmetricCipherKeyPair)new PemReader(reader).ReadObject();
+
             X509V2CrlGenerator gen = new X509V2CrlGenerator();
             gen.SetIssuerDN(issuer.IssuerDN);
             gen.SetNextUpdate(DateTime.Now.AddMonths(3));
@@ -211,6 +212,28 @@ namespace Kriptografija_Projekat_.Service
             ISignatureFactory signatureFactory = new Asn1SignatureFactory(signatureAlgorithm, issuerPrivKey.Private);
             X509Crl crl = gen.Generate(signatureFactory);
             byte[] temp = crl.GetEncoded();
+
+            File.WriteAllBytes(ConfigurationManager.AppSettings["CRL"]! + @"\CertRevocationList.crl", temp);
+        }
+
+        public void RevokeCertificate(Org.BouncyCastle.X509.X509Certificate cert)
+        {
+            X509Crl crl = new X509Crl(File.ReadAllBytes(ConfigurationManager.AppSettings["CRL"]! + @"\CertRevocationList.crl"));
+            Org.BouncyCastle.X509.X509Certificate issuer = new Org.BouncyCastle.X509.X509Certificate(File.ReadAllBytes(ConfigurationManager.AppSettings["Path"]!));
+            AsymmetricCipherKeyPair issuerPrivKey;
+            using (var reader = File.OpenText(ConfigurationManager.AppSettings["Main"]! + @"\ca_key.pem"))
+                issuerPrivKey = (AsymmetricCipherKeyPair)new PemReader(reader).ReadObject();
+
+            X509V2CrlGenerator gen = new X509V2CrlGenerator();
+            gen.SetIssuerDN(issuer.IssuerDN);
+            gen.SetNextUpdate(DateTime.Now.AddMonths(3));
+            gen.SetThisUpdate(DateTime.Now);
+            string signatureAlgorithm = "SHA256withRSA";
+            ISignatureFactory signatureFactory = new Asn1SignatureFactory(signatureAlgorithm, issuerPrivKey.Private);
+            gen.AddCrl(crl);
+            gen.AddCrlEntry(cert.SerialNumber, DateTime.Now, CrlReason.CertificateHold);
+            X509Crl newCrl = gen.Generate(signatureFactory);
+            byte[] temp = newCrl.GetEncoded();
             File.WriteAllBytes(ConfigurationManager.AppSettings["CRL"]! + @"\CertRevocationList.crl", temp);
         }
 

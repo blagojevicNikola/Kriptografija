@@ -24,7 +24,7 @@ namespace Kriptografija_Projekat_.Model
             _signaturePath = signaturePath;
         }
 
-        public byte[]? Load(AsymmetricCipherKeyPair keyPair, CryptoService cryptoService)
+        public byte[]? Load(User user, AsymmetricCipherKeyPair keyPair, CryptoService cryptoService)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace Kriptografija_Projekat_.Model
                 {
                     return null;
                 }
-                byte[] decResult = cryptoService.AesSystemDecrypt(content);
+                byte[] decResult = cryptoService.AesSystemDecrypt(content, user.GetPassword());
 
                 //ISigner signer = SignerUtilities.GetSigner("SHA256WITHRSA");
                 //signer.BlockUpdate(decResult, 0, decResult.Length);
