@@ -166,6 +166,108 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="CertificateTextBox" TargetType="TextBox">
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="7" />
+            </Style>
+            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                <VisualBrush.Visual>
+                    <Label Content="Certificate path" Foreground="{StaticResource PromtTextColor}" FontSize="17" />
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </Style.Resources>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBoxFontColor}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="FontSize" Value="17"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="3,0,0,0"/>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseCaptured" Value="True">
+                <Setter Property="BorderBrush" Value="LightBlue"/>
+            </Trigger>
+            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+            </Trigger>
+            <Trigger Property="Text" Value="{x:Null}">
+                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+            </Trigger>
+            <!--<Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="Background" Value="White" />
+            </Trigger>-->
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="DocumentTextBox" TargetType="TextBox">
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="7" />
+            </Style>
+            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                <VisualBrush.Visual>
+                    <Label Content="Document path" Foreground="{StaticResource PromtTextColor}" FontSize="15" />
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </Style.Resources>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBoxFontColor}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="FontSize" Value="17"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="3,0,0,0"/>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseCaptured" Value="True">
+                <Setter Property="BorderBrush" Value="LightBlue"/>
+            </Trigger>
+            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+            </Trigger>
+            <Trigger Property="Text" Value="{x:Null}">
+                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+            </Trigger>
+            <!--<Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="Background" Value="White" />
+            </Trigger>-->
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="FolderTextBox" TargetType="TextBox">
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="7" />
+            </Style>
+            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                <VisualBrush.Visual>
+                    <Label Content="Folder path" Foreground="{StaticResource PromtTextColor}" FontSize="15" />
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </Style.Resources>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBoxFontColor}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="FontSize" Value="17"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="3,0,0,0"/>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseCaptured" Value="True">
+                <Setter Property="BorderBrush" Value="LightBlue"/>
+            </Trigger>
+            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+            </Trigger>
+            <Trigger Property="Text" Value="{x:Null}">
+                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+            </Trigger>
+            <!--<Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="Background" Value="White" />
+            </Trigger>-->
+        </Style.Triggers>
+    </Style>
+
     <Style x:Key="RegisterButtonStyle" TargetType="Button">
         <Setter Property="Height" Value="30"/>
         <Setter Property="Background" Value="Transparent"/>
@@ -179,7 +281,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Content" Value="Register now"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="ExtraLight"/>
         <Setter Property="Padding" Value="0"/>
@@ -188,14 +289,14 @@
     </Style>
 
     <Style x:Key="LoginButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="30"/>
+        <Setter Property="Height" Value="35"/>
         <Setter Property="Width" Value="80"/>
         <Setter Property="Background" Value="#bfbfbf"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
                     <Grid>
-                        <Border CornerRadius="14"
+                        <Border CornerRadius="17"
                                 Background="{TemplateBinding Button.Background}"/>
                         <ContentPresenter Content="{TemplateBinding Button.Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
@@ -216,4 +317,21 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="OptionButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="Width" Value="35"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="LightGray"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border CornerRadius="50"
+                            Background="{TemplateBinding Button.Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Content="{TemplateBinding Button.Content}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

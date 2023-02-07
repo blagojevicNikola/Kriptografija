@@ -33,19 +33,30 @@
                  Text="{Binding Password}"
                  Style="{StaticResource PasswordTextBox}"
                  Margin="200,20,200,0"/>
-        <StackPanel Grid.Row="3">
-            <Button Content="Login"
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Content="{Binding ErrorMessage}"
+                   FontSize="15"
+                   Margin="0,20,0,0"
+                   HorizontalAlignment="Center"
+                   FontWeight="Light"
+                   Foreground="IndianRed"/>
+            <StackPanel Grid.Row="1">
+                <Button Content="Login"
                     Command="{Binding LoginCommand}"
                     Style="{StaticResource LoginButtonStyle}"
                    
                     VerticalAlignment="Top"
                     Margin="0,50,0,0"/>
-            <Button Content="Back"
+                <Button Content="Back"
                     Style="{StaticResource RegisterButtonStyle}"
                     Width="60"
                     Margin="0,10,0,0"
                     Command="{Binding NavigateBackCommand}"/>
-        </StackPanel>
-       
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

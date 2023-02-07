@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Kriptografija_Projekat_.View" xmlns:viewmodel="clr-namespace:Kriptografija_Projekat_.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:FilesOverviewViewModel}"
+             xmlns:ic="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -32,11 +33,14 @@
                    FontSize="18"
                    FontWeight="SemiBold"/>
                 <Button Grid.Column="1"
+                        Style="{StaticResource OptionButtonStyle}"
                         Command="{Binding AddWindowCommand}"
                         Height="20"
                         Width="20"
                         Margin="0,0,5,0"
-                        VerticalAlignment="Center"/>
+                        VerticalAlignment="Center">
+                    <ic:PackIconMaterial Kind="Plus" Width="14" Height="14"/>
+                </Button>
             </Grid>
 
             <ItemsControl Grid.Row="1"
@@ -53,16 +57,20 @@
             </ItemsControl>
             <Grid Grid.Row="2">
                 <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Center">
+                            HorizontalAlignment="Right">
                     <Button Height="20"
+                            Style="{StaticResource OptionButtonStyle}"
                             Command="{Binding DownloadWindowCommand}"
                             Width="20"
-                            Margin="0,5,0,5"/>
+                            Margin="0,5,5,5">
+                        <ic:PackIconMaterial Kind="Download" Height="13" Width="13"/>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Grid>
 
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1"
+              Background="LightGray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -75,11 +83,24 @@
                     VerticalAlignment="Center"
                     Height="25"
                     Width="50"/>
-
-            <TextBlock Grid.Row="1"
+            <Border Background="White"
+                    CornerRadius="4"
+                    Grid.Row="1"
+                    Margin="4">
+                <TextBlock
+                       Background="Transparent"
                        TextWrapping="Wrap"
                        Text="{Binding FileContent}"
-                       Margin="4"/>
+                       Margin="2">
+
+                    <TextBlock.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </TextBlock.Resources>
+                </TextBlock>
+            </Border>
+            
         </Grid>
     </Grid>
 </UserControl>

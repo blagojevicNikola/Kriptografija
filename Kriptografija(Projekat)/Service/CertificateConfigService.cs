@@ -30,15 +30,17 @@ using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Bcpg;
+using System.Diagnostics;
 
 namespace Kriptografija_Projekat_.Service
 {
     public class CertificateConfigService
     {
-        
+
         public CertificateConfigService()
         {
-           
+
         }
 
         private string CreateCSR(string username, string mail, out AsymmetricCipherKeyPair p)
@@ -66,7 +68,7 @@ namespace Kriptografija_Projekat_.Service
 
             var pkcs10CertificationRequest = new Pkcs10CertificationRequest
                     (PkcsObjectIdentifiers.Sha256WithRsaEncryption.Id, subject, pair.Public, null, pair.Private);
-            
+
             string csr = Convert.ToBase64String(pkcs10CertificationRequest.GetEncoded());
             return csr;
         }
@@ -126,7 +128,7 @@ namespace Kriptografija_Projekat_.Service
             rsaGen.Init(new KeyGenerationParameters(new Org.BouncyCastle.Security.SecureRandom(), 4096));
             AsymmetricCipherKeyPair pair = rsaGen.GenerateKeyPair();
             X509V3CertificateGenerator gen = new X509V3CertificateGenerator();
-            
+
             var attrs = new Dictionary<DerObjectIdentifier, string>();
             attrs[X509Name.CN] = "CA";
             attrs[X509Name.C] = "BA";
@@ -152,7 +154,7 @@ namespace Kriptografija_Projekat_.Service
             X509ExtensionsGenerator extGen = new X509ExtensionsGenerator();
             gen.AddExtension(X509Extensions.KeyUsage, true, new KeyUsage(KeyUsage.CrlSign | KeyUsage.DigitalSignature | KeyUsage.NonRepudiation));
             Org.BouncyCastle.X509.X509Certificate cert = gen.Generate(new Asn1SignatureFactory("SHA256WITHRSA", pair.Private, null));
-            File.WriteAllBytes(ConfigurationManager.AppSettings["Main"]+@"\ca1.der", cert.GetEncoded());
+            File.WriteAllBytes(ConfigurationManager.AppSettings["Main"] + @"\ca1.der", cert.GetEncoded());
             TextWriter tw = new StringWriter();
             PemWriter pw = new PemWriter(tw);
             pw.WriteObject(pair.Private);
@@ -165,13 +167,13 @@ namespace Kriptografija_Projekat_.Service
         {
             X509Crl crl = new X509Crl(File.ReadAllBytes(ConfigurationManager.AppSettings["CRL"]! + @"\CertRevocationList.crl"));
             Org.BouncyCastle.X509.X509Certificate cert = new Org.BouncyCastle.X509.X509Certificate(File.ReadAllBytes(certPath));
-            if(crl.IsRevoked(cert))
+            if (crl.IsRevoked(cert))
             {
                 return null;
             }
-            bool[] usage = new bool[] { true, true, false, true, false, false, false, false, false};
+            bool[] usage = new bool[] { true, true, false, true, false, false, false, false, false };
             bool[] certUsage = cert.GetKeyUsage();
-            if(!compareArrays(usage,certUsage))
+            if (!compareArrays(usage, certUsage))
             {
                 return null;
             }
@@ -186,7 +188,7 @@ namespace Kriptografija_Projekat_.Service
             signer.BlockUpdate(toCheck, 0, toCheck.Length);
             bool isSignatureValid = signer.VerifySignature(actual);
             bool isTimeValid = true;
-            if(DateTime.Now > cert.NotAfter || DateTime.Now < cert.NotBefore)
+            if (DateTime.Now > cert.NotAfter || DateTime.Now < cert.NotBefore)
             {
                 isTimeValid = false;
             }
@@ -235,6 +237,42 @@ namespace Kriptografija_Projekat_.Service
             X509Crl newCrl = gen.Generate(signatureFactory);
             byte[] temp = newCrl.GetEncoded();
             File.WriteAllBytes(ConfigurationManager.AppSettings["CRL"]! + @"\CertRevocationList.crl", temp);
+        }
+
+        public bool WithdrawnRevocation(Org.BouncyCastle.X509.X509Certificate cert)
+        {
+            X509Crl crl = new X509Crl(File.ReadAllBytes(ConfigurationManager.AppSettings["CRL"]! + @"\CertRevocationList.crl"));
+            if(!crl.IsRevoked(cert))
+            {
+                return false;
+            }
+            var entries = crl.GetRevokedCertificates();
+            foreach(X509CrlEntry entry in entries)
+            {
+                if(entry.SerialNumber.Equals(cert.SerialNumber))
+                {
+                    entries.Remove(entry);
+                    break;
+                }
+            }
+            AsymmetricCipherKeyPair issuerPrivKey;
+            using (var reader = File.OpenText(ConfigurationManager.AppSettings["Main"]! + @"\ca_key.pem"))
+                issuerPrivKey = (AsymmetricCipherKeyPair)new PemReader(reader).ReadObject();
+
+            X509V2CrlGenerator gen = new X509V2CrlGenerator();
+            gen.SetIssuerDN(crl.IssuerDN);
+            gen.SetNextUpdate(DateTime.Now.AddMonths(3));
+            gen.SetThisUpdate(DateTime.Now);
+            string signatureAlgorithm = "SHA256withRSA";
+            ISignatureFactory signatureFactory = new Asn1SignatureFactory(signatureAlgorithm, issuerPrivKey.Private);
+            foreach(X509CrlEntry entry in entries)
+            {
+                gen.AddCrlEntry(entry.SerialNumber, entry.RevocationDate, CrlReason.CertificateHold);
+            }
+            X509Crl newCrl = gen.Generate(signatureFactory);
+            byte[] temp = newCrl.GetEncoded();
+            File.WriteAllBytes(ConfigurationManager.AppSettings["CRL"]! + @"\CertRevocationList.crl", temp);
+            return true;
         }
 
         private bool compareArrays(ReadOnlySpan<bool> a1, ReadOnlySpan<bool> a2)

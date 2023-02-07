@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "eR8hFJegGW3JSL/zF8kWKrryeEaOnFPi4E9RvfU/kxOlHWZ9eZt998V9iLsQ3q6cA0bWg37fmgeYJJ+DmqNxKg==",
+  "dgSpecHash": "LPj7exGwm1Td88SteleVd5H9zrgm3rmIdxoCSjyrSFDrw+HpWOA6SflH5Zazrqbuej5mQB+3p+abGXfL6NYVpQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Lenovo PC\\source\\repos\\Kriptografija(Projekat)\\Kriptografija(Projekat)\\Kriptografija(Projekat).csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Lenovo PC\\.nuget\\packages\\bouncycastle.cryptography\\2.0.0\\bouncycastle.cryptography.2.0.0.nupkg.sha512",
+    "C:\\Users\\Lenovo PC\\.nuget\\packages\\mahapps.metro.iconpacks.material\\4.11.0\\mahapps.metro.iconpacks.material.4.11.0.nupkg.sha512",
     "C:\\Users\\Lenovo PC\\.nuget\\packages\\windowsapicodepack-core\\1.1.1\\windowsapicodepack-core.1.1.1.nupkg.sha512",
     "C:\\Users\\Lenovo PC\\.nuget\\packages\\windowsapicodepack-shell\\1.1.1\\windowsapicodepack-shell.1.1.1.nupkg.sha512"
   ],

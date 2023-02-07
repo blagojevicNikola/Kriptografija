@@ -39,3 +39,5 @@ C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\
 C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\obj\Debug\net7.0-windows\Windows\DownloadFileWindow.baml
 C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\bin\Debug\net7.0-windows\Microsoft.WindowsAPICodePack.dll
 C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\bin\Debug\net7.0-windows\Microsoft.WindowsAPICodePack.Shell.dll
+C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\bin\Debug\net7.0-windows\MahApps.Metro.IconPacks.Core.dll
+C:\Users\Lenovo PC\source\repos\Kriptografija(Projekat)\Kriptografija(Projekat)\bin\Debug\net7.0-windows\MahApps.Metro.IconPacks.Material.dll
