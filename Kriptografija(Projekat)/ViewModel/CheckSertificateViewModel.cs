@@ -85,11 +85,10 @@ namespace Kriptografija_Projekat_.ViewModel
             }
             //Org.BouncyCastle.X509.X509Certificate issuer = new Org.BouncyCastle.X509.X509Certificate(File.ReadAllBytes(ConfigurationManager.AppSettings["Path"]!));
             //var list = issuer.GetKeyUsage();
-            //foreach(var l in list)
+            //foreach (var l in list)
             //{
             //    Debug.WriteLine(l);
             //}
-            //KeyUsage
         }
     }
 }

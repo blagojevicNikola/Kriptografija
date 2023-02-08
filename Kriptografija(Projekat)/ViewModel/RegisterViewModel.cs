@@ -5,6 +5,7 @@ using Kriptografija_Projekat_.Stores;
 using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace Kriptografija_Projekat_.ViewModel
             DataBaseService dbService = new DataBaseService();
             try
             {
-                if(dbService.AddCredentials(Username, Password))
+                if(dbService.AddCredentials(Username, Password, Email))
                 {
                     UserService userService = new UserService();
                     userService.SetupUserEnvironment(Username);
@@ -60,6 +61,7 @@ namespace Kriptografija_Projekat_.ViewModel
                 
             }catch(Exception e)
             {
+                Debug.WriteLine(e.Message);
                 MessageBox.Show("Error while registrating!");
             }
         }

@@ -207,14 +207,14 @@
             </Style>
             <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
                 <VisualBrush.Visual>
-                    <Label Content="Document path" Foreground="{StaticResource PromtTextColor}" FontSize="15" />
+                    <Label Content="Document path" Foreground="{StaticResource PromtTextColor}" FontSize="14" />
                 </VisualBrush.Visual>
             </VisualBrush>
         </Style.Resources>
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="Foreground" Value="{StaticResource TextBoxFontColor}"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="FontSize" Value="17"/>
+        <Setter Property="FontSize" Value="14"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="3,0,0,0"/>
 
@@ -248,7 +248,7 @@
         <Setter Property="BorderThickness" Value="2"/>
         <Setter Property="Foreground" Value="{StaticResource TextBoxFontColor}"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="FontSize" Value="17"/>
+        <Setter Property="FontSize" Value="15"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="3,0,0,0"/>
 

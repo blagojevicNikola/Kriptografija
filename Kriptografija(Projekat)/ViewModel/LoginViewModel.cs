@@ -2,6 +2,7 @@
 using Kriptografija_Projekat_.Model;
 using Kriptografija_Projekat_.Service;
 using Kriptografija_Projekat_.Stores;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
@@ -41,15 +42,15 @@ namespace Kriptografija_Projekat_.ViewModel
             _cert = cert;
         }
 
-        public void login()
+        private void login()
         {
             _numOfAttempts++;
             if(_numOfAttempts<4)
             {
                 DataBaseService dbService = new DataBaseService();
-                if (dbService.UserExists(Username, Password))
+                if (matchesWithCertificate(Username) && dbService.UserExists(Username, Password, _cert.SubjectDN.GetValueList(X509Name.E).Single()))
                 {
-                    _user = new User(Username, Password, "mejl", _cert);
+                    _user = new User(Username, Password, _cert.SubjectDN.GetValueList(X509Name.E).Single(), _cert);
                     NavigateFileOvereviewCommand.Execute(null);
                 }
                 else
@@ -70,9 +71,9 @@ namespace Kriptografija_Projekat_.ViewModel
             {
                 
                 DataBaseService dbService = new DataBaseService();
-                if (dbService.UserExists(Username, Password))
+                if (dbService.UserExists(Username, Password, _cert.SubjectDN.GetValueList(X509Name.E).Single()))
                 {
-                    _user = new User(Username, Password, "mejl", _cert);
+                    _user = new User(Username, Password, _cert.SubjectDN.GetValueList(X509Name.E).Single(), _cert);
                     CertificateConfigService service = new CertificateConfigService();
                     if(service.WithdrawnRevocation(_cert))
                     {
@@ -108,6 +109,15 @@ namespace Kriptografija_Projekat_.ViewModel
             //        MessageBox.Show("Wrong credentials! Your certificate is revoked!");
             //    }
             //}
+        }
+
+        private bool matchesWithCertificate(string username)
+        {
+            if(_cert.SubjectDN.GetValueList(X509Name.CN).Contains(username)) 
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
