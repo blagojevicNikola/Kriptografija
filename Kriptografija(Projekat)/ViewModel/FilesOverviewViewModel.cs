@@ -23,9 +23,13 @@ namespace Kriptografija_Projekat_.ViewModel
         private User _user;
         private ObservableCollection<UserFile> _userFiles;
         private string _fileContent;
+        private UserFile? _selectedFile;
+        private string _fileName = "";
 
         public string FileContent { get { return _fileContent; } set { _fileContent= value; NotifyPropertyChanged("FileContent"); } }
         public ObservableCollection<UserFile> UserFiles { get { return _userFiles; } set { _userFiles = value; NotifyPropertyChanged("UserFile"); } }
+        public string FileName { get { return _fileName; } set { _fileName = value; NotifyPropertyChanged("FileName"); } }
+        public UserFile? SelectedFile { get { return _selectedFile; } set { _selectedFile = value; NotifyPropertyChanged("SelectedFile"); } }
         public ICommand AddWindowCommand { get; set; }
         public ICommand DownloadWindowCommand { get; set; }
         public ICommand LoadFileContentCommand { get; set; }
@@ -128,9 +132,10 @@ namespace Kriptografija_Projekat_.ViewModel
 
         private void selectFile(UserFile file)
         {
-            if(file!=null && !file.IsSelected)
+            if(_selectedFile!=file)
             {
                 FileContent = "";
+                FileName = file.Name;
             }
         }
 

@@ -70,28 +70,45 @@
         </Grid>
 
         <Grid Grid.Column="1"
-              Background="LightGray">
+              Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button Grid.Row="0"
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Content="Load"
+                        Style="{StaticResource LoadButtonStyle}"
                     Command="{Binding LoadFileContentCommand}"
-                    Margin="4"
+                    Margin="8,4,4,4"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Height="25"
                     Width="50"/>
-            <Border Background="White"
+
+                <TextBlock  Grid.Column="1"
+                            Text="{Binding FileName}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="17"
+                            FontWeight="SemiBold"
+                            Margin="7,4,7,4"/>
+            </Grid>
+
+            <Border Background="#e8e8e8"
                     CornerRadius="4"
                     Grid.Row="1"
-                    Margin="4">
+                    Margin="6">
                 <TextBlock
                        Background="Transparent"
                        TextWrapping="Wrap"
                        Text="{Binding FileContent}"
-                       Margin="2">
+                       Margin="7">
 
                     <TextBlock.Resources>
                         <Style TargetType="{x:Type Border}">

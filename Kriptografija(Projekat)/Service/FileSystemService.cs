@@ -51,16 +51,16 @@ namespace Kriptografija_Projekat_.Service
             int tmp = 0;
             chunks.ForEach(chunk =>
             {
-                newFile.AddSegment(writeSegment(user, folders[tmp++].ToString(), chunk, user.KeyPair, cryptoService));
+                newFile.AddSegment(writeSegment(user, folders[tmp++].ToString(), chunk, user.KeyPair, cryptoService, fileName));
             });
             return newFile;
         }
 
 
-        private Segment writeSegment(User user, string numOfChunk, byte[] arr, AsymmetricCipherKeyPair keyPair, CryptoService cryptoService)
+        private Segment writeSegment(User user, string numOfChunk, byte[] arr, AsymmetricCipherKeyPair keyPair, CryptoService cryptoService, string fileName)
         {
             string directoryName = ConfigurationManager.AppSettings["FS"]! + @"\" + numOfChunk;
-            string chunkName = user.Username+ "_" + numOfChunk;
+            string chunkName = fileName+ "_" + user.Username+ "_" + numOfChunk;
             if (!File.Exists(directoryName))
             {
                 Directory.CreateDirectory(directoryName);
