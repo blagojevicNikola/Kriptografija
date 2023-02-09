@@ -53,18 +53,26 @@ namespace Kriptografija_Projekat_.ViewModel
             win.DataContext = new AddFileViewModel(_user);
             AddFileViewModel vm = (AddFileViewModel)win.DataContext;
             vm.CloseWindow += (a, e) => {
-                FileSystemService fsService = new FileSystemService();
-                UserFile? file = fsService.AddFile(_user, vm.FilePath);
-                if(file!=null)
+                try
                 {
-                    UserService userService = new UserService();
-                    userService.UploadInfo(_user, file);
-                    UserFiles.Add(file);
-                    win.Close();
-                }else
+                    FileSystemService fsService = new FileSystemService();
+                    UserFile? file = fsService.AddFile(_user, vm.FilePath);
+                    if (file != null)
+                    {
+                        UserService userService = new UserService();
+                        userService.UploadInfo(_user, file);
+                        UserFiles.Add(file);
+                        win.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("File doesn't exist!");
+                    }
+                }catch(Exception ex)
                 {
-                    MessageBox.Show("File doesn't exist!");
-                }  
+                    MessageBox.Show("Error while adding file!");
+                    Debug.WriteLine(ex.Message);
+                }
             };
             win.Show();
         }
@@ -76,30 +84,37 @@ namespace Kriptografija_Projekat_.ViewModel
             win.DataContext = vm;
             vm.CloseWindow += (a, e) =>
             {
-                UserFile? selected = null;
-                foreach(UserFile file in UserFiles)
+                try
                 {
-                    if(file.IsSelected)
+                    UserFile? selected = null;
+                    foreach (UserFile file in UserFiles)
                     {
-                        selected = file;
-                        break;
+                        if (file.IsSelected)
+                        {
+                            selected = file;
+                            break;
+                        }
                     }
-                }
-                if(selected!=null && Directory.Exists(vm.PathName))
-                {
-                    bool downloaded = selected.DownloadFile(vm.PathName, _user);
-                    if(!downloaded)
+                    if (selected != null && Directory.Exists(vm.PathName))
                     {
-                        MessageBox.Show("Your file is corrupted!");
+                        bool downloaded = selected.DownloadFile(vm.PathName, _user);
+                        if (!downloaded)
+                        {
+                            MessageBox.Show("Your file is corrupted!");
+                        }
+                        else
+                        {
+                            win.Close();
+                        }
                     }
                     else
                     {
-                        win.Close();
+                        MessageBox.Show("Error occured!");
                     }
-                }
-                else
+                }catch(Exception ex)
                 {
-                    MessageBox.Show("Error occured!");
+                    MessageBox.Show("Error while downloading the file!");
+                    Debug.WriteLine(ex.Message);
                 }
             };
             win.Show();
@@ -107,27 +122,36 @@ namespace Kriptografija_Projekat_.ViewModel
 
         private void loadFileContent()
         {
-            UserFile? file = null;
-            foreach(UserFile userFile in UserFiles)
+            try
             {
-                if(userFile.IsSelected)
+                UserFile? file = null;
+                foreach (UserFile userFile in UserFiles)
                 {
-                    file = userFile;
-                    break;
+                    if (userFile.IsSelected)
+                    {
+                        file = userFile;
+                        break;
+                    }
                 }
-            }
-            if(file==null)
+                if (file == null)
+                {
+                    return;
+                }
+                byte[]? content = file.GetContent(_user);
+                if (content == null)
+                {
+                    MessageBox.Show("This file has been corrupted!");
+                }
+                else
+                {
+                    FileContent = Encoding.UTF8.GetString(content);
+                }
+            }catch(Exception ex)
             {
-                return;
+                MessageBox.Show("Error while loading the file!");
+                Debug.WriteLine(ex.Message);
             }
-            byte[]? content = file.GetContent(_user);
-            if(content==null)
-            {
-                MessageBox.Show("This file has been corrupted!");
-            }else
-            {
-                FileContent = Encoding.UTF8.GetString(content);
-            }
+           
         }
 
         private void selectFile(UserFile file)

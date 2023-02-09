@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Kriptografija_Projekat_.View" xmlns:viewmodel="clr-namespace:Kriptografija_Projekat_.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:FilesOverviewViewModel}"
              xmlns:ic="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="650" d:DesignWidth="900">
     <UserControl.Resources>
         <ResourceDictionary Source="/Resources/Styles.xaml"/>
     </UserControl.Resources>
@@ -28,6 +28,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0"
+                       VerticalAlignment="Bottom"
                    Content="Files"
                    Padding="3,0,0,0"
                    FontSize="18"
@@ -37,24 +38,27 @@
                         Command="{Binding AddWindowCommand}"
                         Height="20"
                         Width="20"
-                        Margin="0,0,5,0"
+                        Margin="0,6,5,0"
                         VerticalAlignment="Center">
                     <ic:PackIconMaterial Kind="Plus" Width="14" Height="14"/>
                 </Button>
             </Grid>
-
-            <ItemsControl Grid.Row="1"
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto">
+                <ItemsControl
                           Margin="5"
                           ItemsSource="{Binding UserFiles}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <RadioButton Style="{StaticResource FileRadioButtonStyle}"
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <RadioButton Style="{StaticResource FileRadioButtonStyle}"
                                      Command="{Binding Path=DataContext.SelectFileCommand, 
          RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                      CommandParameter="{Binding}"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            
             <Grid Grid.Row="2">
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right">
@@ -62,7 +66,7 @@
                             Style="{StaticResource OptionButtonStyle}"
                             Command="{Binding DownloadWindowCommand}"
                             Width="20"
-                            Margin="0,5,5,5">
+                            Margin="0,5,5,7">
                         <ic:PackIconMaterial Kind="Download" Height="13" Width="13"/>
                     </Button>
                 </StackPanel>
@@ -85,7 +89,7 @@
                         Content="Load"
                         Style="{StaticResource LoadButtonStyle}"
                     Command="{Binding LoadFileContentCommand}"
-                    Margin="8,4,4,4"
+                    Margin="8,3,4,4"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Height="25"

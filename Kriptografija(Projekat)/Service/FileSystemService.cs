@@ -39,13 +39,11 @@ namespace Kriptografija_Projekat_.Service
             int i = 0;
             while(i!=chunks.Count-1)
             {
-                Debug.WriteLine("--" + i);
                 int temp = rand.Next(chunks.Count);
                 if(!folders.Contains(temp))
                 {
                     folders[i] = temp;
                     i++;
-                    Debug.WriteLine("++" + i);
                 }
             }
             int tmp = 0;

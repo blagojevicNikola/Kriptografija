@@ -107,7 +107,7 @@ namespace Kriptografija_Projekat_.Service
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA256WITHRSA", issuerPrivKey.Private, random);
             certificateGenerator.AddExtension(X509Extensions.KeyUsage, true, new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.NonRepudiation | KeyUsage.DataEncipherment));
             Org.BouncyCastle.X509.X509Certificate newCertificate = certificateGenerator.Generate(signatureFactory);
-            File.WriteAllBytes(ConfigurationManager.AppSettings["Main"]! + @"\" + serialNumber + ".der", newCertificate.GetEncoded());
+            File.WriteAllBytes(ConfigurationManager.AppSettings["Certs"]! + @"\" + username + ".der", newCertificate.GetEncoded());
             TextWriter tw = new StringWriter();
             PemWriter pw = new PemWriter(tw);
             pw.WriteObject(csrPair.Private);

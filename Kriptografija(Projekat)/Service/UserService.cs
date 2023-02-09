@@ -49,8 +49,9 @@ namespace Kriptografija_Projekat_.Service
 
         public void SetUserPassword(User user)
         {
+            Random rand = new Random();
             string folderPath = ConfigurationManager.AppSettings["Users"]! + @"\" + user.Username;
-            string password = user.Password;
+            string password = user.Password + rand.Next(1000).ToString();
             while(password.Length <16)
             {
                 password += password;

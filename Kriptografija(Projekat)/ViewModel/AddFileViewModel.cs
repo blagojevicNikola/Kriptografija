@@ -27,7 +27,6 @@ namespace Kriptografija_Projekat_.ViewModel
             _user = user;
         }
 
-
         private void add()
         {
             CloseWindow.Invoke(this, new EventArgs());
